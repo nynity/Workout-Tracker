@@ -16,29 +16,29 @@
         <section id="workoutGroups">
             <h2>Workout Groups</h2>
             <div id="groupList"></div>
-            <form id="addGroupForm">
+            <div class="form-group">
                 <input type="text" id="newGroupName" placeholder="New group name" required>
-                <button type="submit">Add Group</button>
-            </form>
+                <button id="addGroupBtn">Add Group</button>
+            </div>
         </section>
         <section id="currentWorkout" style="display: none;">
-            <h2>Current Workout</h2>
-            <select id="exerciseSelect"></select>
-            <div id="exerciseDetails"></div>
-            <form id="recordSetForm">
-                <div class="form-row">
+            <h2>Current Workout: <span id="currentWorkoutName"></span></h2>
+            <div id="exerciseList"></div>
+            <div id="exerciseForm" style="display: none;">
+                <h3>Record Set: <span id="currentExerciseName"></span></h3>
+                <div class="form-group">
                     <label for="setNumber">Set:</label>
                     <span id="setNumber"></span>
                 </div>
-                <div class="form-row">
+                <div class="form-group">
                     <label for="reps">Reps:</label>
-                    <input type="number" id="reps" required min="1">
-                    <button type="button" class="stepper-btn" onclick="adjustReps(-1)">-</button>
-                    <button type="button" class="stepper-btn" onclick="adjustReps(1)">+</button>
+                    <button class="stepper-btn" onclick="adjustReps(-1)">-</button>
+                    <span id="reps">15</span>
+                    <button class="stepper-btn" onclick="adjustReps(1)">+</button>
                 </div>
-                <div class="form-row">
+                <div class="form-group">
                     <label for="bandColor">Band Color:</label>
-                    <select id="bandColor" required>
+                    <select id="bandColor">
                         <option value="Green">Green</option>
                         <option value="Blue">Blue</option>
                         <option value="Orange">Orange</option>
@@ -46,18 +46,28 @@
                         <option value="Purple">Purple</option>
                     </select>
                 </div>
-                <div class="form-row">
+                <div class="form-group">
                     <label for="difficulty">Difficulty:</label>
-                    <input type="number" id="difficulty" required min="1" max="5">
-                    <button type="button" class="stepper-btn" onclick="adjustDifficulty(-1)">-</button>
-                    <button type="button" class="stepper-btn" onclick="adjustDifficulty(1)">+</button>
+                    <button class="stepper-btn" onclick="adjustDifficulty(-1)">-</button>
+                    <span id="difficulty">3</span>
+                    <button class="stepper-btn" onclick="adjustDifficulty(1)">+</button>
                 </div>
-                <button type="submit">Record Set</button>
-            </form>
+                <button id="recordSetBtn">Record Set</button>
+            </div>
             <div id="recordedSets"></div>
             <button id="finishWorkoutBtn">Finish Workout</button>
         </section>
     </main>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle"></h2>
+            <input type="text" id="modalInput" placeholder="Name">
+            <input type="number" id="modalSets" placeholder="Target Sets" min="1" value="3">
+            <input type="number" id="modalReps" placeholder="Target Reps" min="1" value="15">
+            <button id="modalSaveBtn">Save</button>
+            <button id="modalCancelBtn">Cancel</button>
+        </div>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>

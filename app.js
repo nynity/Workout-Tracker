@@ -95,22 +95,37 @@ let currentExercise = null;
 
 // DOM elements
 const groupList = document.getElementById('groupList');
-const addGroupForm = document.getElementById('addGroupForm');
+const addGroupBtn = document.getElementById('addGroupBtn');
 const newGroupName = document.getElementById('newGroupName');
 const currentWorkout = document.getElementById('currentWorkout');
-const exerciseSelect = document.getElementById('exerciseSelect');
-const exerciseDetails = document.getElementById('exerciseDetails');
-const recordSetForm = document.getElementById('recordSetForm');
+const workoutGroups = document.getElementById('workoutGroups');
+const exerciseList = document.getElementById('exerciseList');
+const exerciseForm = document.getElementById('exerciseForm');
+const recordSetBtn = document.getElementById('recordSetBtn');
 const finishWorkoutBtn = document.getElementById('finishWorkoutBtn');
 const recordedSets = document.getElementById('recordedSets');
 const setNumber = document.getElementById('setNumber');
+const repsSpan = document.getElementById('reps');
+const difficultySpan = document.getElementById('difficulty');
+const bandColor = document.getElementById('bandColor');
+const currentWorkoutName = document.getElementById('currentWorkoutName');
+const currentExerciseName = document.getElementById('currentExerciseName');
+
+// Modal elements
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modalTitle');
+const modalInput = document.getElementById('modalInput');
+const modalSets = document.getElementById('modalSets');
+const modalReps = document.getElementById('modalReps');
+const modalSaveBtn = document.getElementById('modalSaveBtn');
+const modalCancelBtn = document.getElementById('modalCancelBtn');
 
 // Event listeners
-addGroupForm.addEventListener('submit', addGroup);
-recordSetForm.addEventListener('submit', recordSet);
+addGroupBtn.addEventListener('click', showAddGroupModal);
+recordSetBtn.addEventListener('click', recordSet);
 finishWorkoutBtn.addEventListener('click', finishWorkout);
-exerciseSelect.addEventListener('change', updateExerciseDetails);
-
+modalSaveBtn.addEventListener('click', handleModalSave);
+modalCancelBtn.addEventListener('click', closeModal);
 // Functions
 function renderGroups() {
     groupList.innerHTML = '';
@@ -121,7 +136,7 @@ function renderGroups() {
             <h3>${group.name}</h3>
             <button onclick="toggleExercises('${group.id}')">Toggle Exercises</button>
             <button onclick="startWorkout('${group.id}')">Start Workout</button>
-            <button onclick="addExercise('${group.id}')">Add Exercise</button>
+            <button onclick="showAddExerciseModal('${group.id}')">Add Exercise</button>
             <div id="exercises-${group.id}" class="exercises" style="display: none;"></div>
         `;
         groupList.appendChild(groupElement);
@@ -141,39 +156,75 @@ function renderExercises(group) {
         const exerciseElement = document.createElement('div');
         exerciseElement.innerHTML = `
             <p>${exercise.name} (${exercise.targetSets} sets, ${exercise.targetReps} reps)</p>
-            <button onclick="editExercise('${group.id}', '${exercise.id}')">Edit</button>
+            <button onclick="showEditExerciseModal('${group.id}', '${exercise.id}')">Edit</button>
         `;
         exercisesDiv.appendChild(exerciseElement);
     });
 }
 
-function addGroup(e) {
-    e.preventDefault();
-    const name = newGroupName.value.trim();
+function showAddGroupModal() {
+    modalTitle.textContent = 'Add New Group';
+    modalInput.value = '';
+    modalSets.style.display = 'none';
+    modalReps.style.display = 'none';
+    modal.style.display = 'block';
+    modalSaveBtn.onclick = addGroup;
+}
+
+function showAddExerciseModal(groupId) {
+    modalTitle.textContent = 'Add New Exercise';
+    modalInput.value = '';
+    modalSets.style.display = 'inline';
+    modalReps.style.display = 'inline';
+    modal.style.display = 'block';
+    modalSaveBtn.onclick = () => addExercise(groupId);
+}
+
+function showEditExerciseModal(groupId, exerciseId) {
+    const group = workoutPlan.groups.find(g => g.id === groupId);
+    const exercise = group.exercises.find(e => e.id === exerciseId);
+    modalTitle.textContent = 'Edit Exercise';
+    modalInput.value = exercise.name;
+    modalSets.value = exercise.targetSets;
+    modalReps.value = exercise.targetReps;
+    modalSets.style.display = 'inline';
+    modalReps.style.display = 'inline';
+    modal.style.display = 'block';
+    modalSaveBtn.onclick = () => editExercise(groupId, exerciseId);
+}
+
+function closeModal() {
+    modal.style.display = 'none';
+}
+
+function handleModalSave() {
+    modalSaveBtn.onclick();
+    closeModal();
+}
+
+function addGroup() {
+    const name = modalInput.value.trim();
     if (name) {
         workoutPlan.addGroup(name);
-        newGroupName.value = '';
         renderGroups();
     }
 }
 
 function addExercise(groupId) {
-    const name = prompt('Enter exercise name:');
+    const name = modalInput.value.trim();
+    const targetSets = parseInt(modalSets.value);
+    const targetReps = parseInt(modalReps.value);
     if (name) {
-        const targetSets = parseInt(prompt('Enter target sets:', '3')) || 3;
-        const targetReps = parseInt(prompt('Enter target reps:', '15')) || 15;
         workoutPlan.addExercise(groupId, name, targetSets, targetReps);
         renderGroups();
     }
 }
 
 function editExercise(groupId, exerciseId) {
-    const group = workoutPlan.groups.find(g => g.id === groupId);
-    const exercise = group.exercises.find(e => e.id === exerciseId);
-    const name = prompt('Enter new exercise name:', exercise.name);
+    const name = modalInput.value.trim();
+    const targetSets = parseInt(modalSets.value);
+    const targetReps = parseInt(modalReps.value);
     if (name) {
-        const targetSets = parseInt(prompt('Enter new target sets:', exercise.targetSets)) || exercise.targetSets;
-        const targetReps = parseInt(prompt('Enter new target reps:', exercise.targetReps)) || exercise.targetReps;
         workoutPlan.updateExercise(groupId, exerciseId, name, targetSets, targetReps);
         renderGroups();
     }
@@ -182,31 +233,30 @@ function editExercise(groupId, exerciseId) {
 function startWorkout(groupId) {
     currentSession = workoutPlan.startWorkout(groupId);
     const group = workoutPlan.groups.find(g => g.id === groupId);
+    workoutGroups.style.display = 'none';
     currentWorkout.style.display = 'block';
-    populateExerciseSelect(group);
-    updateExerciseDetails();
+    currentWorkoutName.textContent = group.name;
+    renderExerciseList(group);
 }
 
-function populateExerciseSelect(group) {
-    exerciseSelect.innerHTML = '';
+function renderExerciseList(group) {
+    exerciseList.innerHTML = '';
     group.exercises.forEach(exercise => {
-        const option = document.createElement('option');
-        option.value = exercise.id;
-        option.textContent = exercise.name;
-        exerciseSelect.appendChild(option);
+        const exerciseElement = document.createElement('div');
+        exerciseElement.innerHTML = `
+            <h3>${exercise.name}</h3>
+            <p>Target: ${exercise.targetSets} sets, ${exercise.targetReps} reps</p>
+            <button onclick="selectExercise('${exercise.id}')">Select</button>
+        `;
+        exerciseList.appendChild(exerciseElement);
     });
 }
 
-function updateExerciseDetails() {
-    const groupId = currentSession.groupId;
-    const group = workoutPlan.groups.find(g => g.id === groupId);
-    const exerciseId = exerciseSelect.value;
+function selectExercise(exerciseId) {
+    const group = workoutPlan.groups.find(g => g.id === currentSession.groupId);
     currentExercise = group.exercises.find(e => e.id === exerciseId);
-    
-    exerciseDetails.innerHTML = `
-        <p>Target: ${currentExercise.targetSets} sets, ${currentExercise.targetReps} reps</p>
-    `;
-    
+    currentExerciseName.textContent = currentExercise.name;
+    exerciseForm.style.display = 'block';
     updateSetNumber();
     renderRecordedSets();
 }
@@ -216,17 +266,19 @@ function updateSetNumber() {
     setNumber.textContent = `${completedSets + 1} of ${currentExercise.targetSets}`;
 }
 
-function recordSet(e) {
-    e.preventDefault();
+function recordSet() {
     if (currentSession && currentExercise) {
-        const reps = document.getElementById('reps').value;
-        const bandColor = document.getElementById('bandColor').value;
-        const difficulty = document.getElementById('difficulty').value;
+        const reps = parseInt(repsSpan.textContent);
+        const difficulty = parseInt(difficultySpan.textContent);
         
-        workoutPlan.addSet(currentSession.id, currentExercise.id, reps, bandColor, difficulty);
+        workoutPlan.addSet(currentSession.id, currentExercise.id, reps, bandColor.value, difficulty);
         updateSetNumber();
         renderRecordedSets();
-        recordSetForm.reset();
+        
+        // Reset form to default values
+        repsSpan.textContent = '15';
+        difficultySpan.textContent = '3';
+        bandColor.value = 'Green';
     }
 }
 
@@ -245,18 +297,19 @@ function renderRecordedSets() {
 function finishWorkout() {
     currentSession = null;
     currentExercise = null;
+    workoutGroups.style.display = 'block';
     currentWorkout.style.display = 'none';
     alert('Workout finished!');
 }
 
 function adjustReps(amount) {
-    const repsInput = document.getElementById('reps');
-    repsInput.value = Math.max(1, parseInt(repsInput.value) + amount);
+    const currentReps = parseInt(repsSpan.textContent);
+    repsSpan.textContent = Math.max(1, currentReps + amount);
 }
 
 function adjustDifficulty(amount) {
-    const difficultyInput = document.getElementById('difficulty');
-    difficultyInput.value = Math.max(1, Math.min(5, parseInt(difficultyInput.value) + amount));
+    const currentDifficulty = parseInt(difficultySpan.textContent);
+    difficultySpan.textContent = Math.max(1, Math.min(5, currentDifficulty + amount));
 }
 
 // Initial render
