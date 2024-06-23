@@ -23,20 +23,39 @@
         </section>
         <section id="currentWorkout" style="display: none;">
             <h2>Current Workout</h2>
-            <div id="exerciseList"></div>
+            <select id="exerciseSelect"></select>
+            <div id="exerciseDetails"></div>
             <form id="recordSetForm">
-                <input type="number" id="reps" placeholder="Reps" required>
-                <select id="bandColor" required>
-                    <option value="Green">Green</option>
-                    <option value="Blue">Blue</option>
-                    <option value="Orange">Orange</option>
-                    <option value="Red">Red</option>
-                    <option value="Purple">Purple</option>
-                </select>
-                <input type="number" id="difficulty" placeholder="Difficulty (1-5)" min="1" max="5" required>
+                <div class="form-row">
+                    <label for="setNumber">Set:</label>
+                    <span id="setNumber"></span>
+                </div>
+                <div class="form-row">
+                    <label for="reps">Reps:</label>
+                    <input type="number" id="reps" required min="1">
+                    <button type="button" class="stepper-btn" onclick="adjustReps(-1)">-</button>
+                    <button type="button" class="stepper-btn" onclick="adjustReps(1)">+</button>
+                </div>
+                <div class="form-row">
+                    <label for="bandColor">Band Color:</label>
+                    <select id="bandColor" required>
+                        <option value="Green">Green</option>
+                        <option value="Blue">Blue</option>
+                        <option value="Orange">Orange</option>
+                        <option value="Red">Red</option>
+                        <option value="Purple">Purple</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="difficulty">Difficulty:</label>
+                    <input type="number" id="difficulty" required min="1" max="5">
+                    <button type="button" class="stepper-btn" onclick="adjustDifficulty(-1)">-</button>
+                    <button type="button" class="stepper-btn" onclick="adjustDifficulty(1)">+</button>
+                </div>
                 <button type="submit">Record Set</button>
             </form>
-            <button id="finishWorkoutBtn" style="display: none;">Finish Workout</button>
+            <div id="recordedSets"></div>
+            <button id="finishWorkoutBtn">Finish Workout</button>
         </section>
     </main>
     <script src="app.js"></script>
