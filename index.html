@@ -3,14 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Workout App</title>
+    <title>Workout Planner PWA</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <h1>My Workout Tracker</h1>
-    <div id="app">
-        <!-- Your app content will go here -->
-    </div>
-    <script src="script.js"></script>
+    <nav>
+        <h1>Workout Planner</h1>
+        <button id="historyBtn">History</button>
+    </nav>
+    <main>
+        <section id="workoutGroups">
+            <h2>Workout Groups</h2>
+            <div id="groupList"></div>
+            <form id="addGroupForm">
+                <input type="text" id="newGroupName" placeholder="New group name" required>
+                <button type="submit">Add Group</button>
+            </form>
+        </section>
+        <section id="currentWorkout" style="display: none;">
+            <h2>Current Workout</h2>
+            <div id="exerciseList"></div>
+            <form id="recordSetForm">
+                <input type="number" id="reps" placeholder="Reps" required>
+                <select id="bandColor" required>
+                    <option value="Green">Green</option>
+                    <option value="Blue">Blue</option>
+                    <option value="Orange">Orange</option>
+                    <option value="Red">Red</option>
+                    <option value="Purple">Purple</option>
+                </select>
+                <input type="number" id="difficulty" placeholder="Difficulty (1-5)" min="1" max="5" required>
+                <button type="submit">Record Set</button>
+            </form>
+            <button id="finishWorkoutBtn" style="display: none;">Finish Workout</button>
+        </section>
+    </main>
+    <script src="app.js"></script>
 </body>
 </html>
