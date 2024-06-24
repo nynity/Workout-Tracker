@@ -1,73 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workout Planner PWA</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-</head>
-<body>
-    <nav>
-        <h1>Workout Planner</h1>
-        <button id="historyBtn">History</button>
-    </nav>
-    <main>
-        <section id="workoutGroups">
-            <h2>Workout Groups</h2>
-            <div id="groupList"></div>
-            <div class="form-group">
-                <input type="text" id="newGroupName" placeholder="New group name" required>
-                <button id="addGroupBtn">Add Group</button>
-            </div>
-        </section>
-        <section id="currentWorkout" style="display: none;">
-            <h2>Current Workout: <span id="currentWorkoutName"></span></h2>
-            <div id="exerciseList"></div>
-            <div id="exerciseForm" style="display: none;">
-                <h3>Record Set: <span id="currentExerciseName"></span></h3>
-                <div class="form-group">
-                    <label for="setNumber">Set:</label>
-                    <span id="setNumber"></span>
-                </div>
-                <div class="form-group">
-                    <label for="reps">Reps:</label>
-                    <button class="stepper-btn" onclick="adjustReps(-1)">-</button>
-                    <span id="reps">15</span>
-                    <button class="stepper-btn" onclick="adjustReps(1)">+</button>
-                </div>
-                <div class="form-group">
-                    <label for="bandColor">Band Color:</label>
-                    <select id="bandColor">
-                        <option value="Green">Green</option>
-                        <option value="Blue">Blue</option>
-                        <option value="Orange">Orange</option>
-                        <option value="Red">Red</option>
-                        <option value="Purple">Purple</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="difficulty">Difficulty:</label>
-                    <button class="stepper-btn" onclick="adjustDifficulty(-1)">-</button>
-                    <span id="difficulty">3</span>
-                    <button class="stepper-btn" onclick="adjustDifficulty(1)">+</button>
-                </div>
-                <button id="recordSetBtn">Record Set</button>
-            </div>
-            <div id="recordedSets"></div>
-            <button id="finishWorkoutBtn">Finish Workout</button>
-        </section>
-    </main>
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <h2 id="modalTitle"></h2>
-            <input type="text" id="modalInput" placeholder="Name">
-            <input type="number" id="modalSets" placeholder="Target Sets" min="1" value="3">
-            <input type="number" id="modalReps" placeholder="Target Reps" min="1" value="15">
-            <button id="modalSaveBtn">Save</button>
-            <button id="modalCancelBtn">Cancel</button>
-        </div>
+<div class="container">
+  <h1>Workout Planner</h1>
+
+  <div class="section-header">
+    <h2>Workout Groups</h2>
+    <div>
+      <button id="editGroupsBtn">Edit Groups</button>
+      <button id="addGroupBtn">Add Group</button>
     </div>
-    <script src="app.js"></script>
-</body>
-</html>
+  </div>
+  <div id="workoutGroups" class="workout-groups">
+    <!-- Workout groups will be dynamically added here -->
+  </div>
+
+  <div id="workoutInfo">
+    <p>Select a workout group to see and edit exercises.</p>
+  </div>
+</div>
